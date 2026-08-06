@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Antibiotic Dosing — المضادات الحيوية للأطفال</title>
+<meta name="description" content="Pediatric antibiotic dosing quick-reference and mL calculator — syrup, suspension &amp; injectable.">
+
+<!-- PWA: installable app shell, works fully offline once cached -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#17231E">
+<meta name="format-detection" content="telephone=no">
+
+<!-- iOS home-screen behaviour -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Antibiotic Dosing">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+
+<!-- Android / other -->
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/png" href="./icons/favicon.png">
+<link rel="icon" href="./icons/favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF0E9;
+    --paper-deep:#E3E7DC;
+    --ink:#17231E;
+    --ink-soft:#4B564E;
+    --teal:#1B6E62;      --teal-tint:#DCEAE6;
+    --amber:#B8842E;     --amber-tint:#F3E7CE;
+    --plum:#6B4472;      --plum-tint:#EADFEC;
+    --slate:#4C5A63;     --slate-tint:#E0E5E7;
+    --indigo:#2E4A6B;    --indigo-tint:#DCE3EC;
+    --red:#A63A34;       --red-tint:#F3DEDC;
+    --line: rgba(23,35,30,.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Public Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .ar{ font-family:'Almarai',sans-serif; direction:rtl; unicode-bidi:isolate; }
+  .mono{ font-family:'JetBrains Mono',monospace; font-variant-numeric: tabular-nums; }
+  .display{ font-family:'Fraunces',serif; }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    background:var(--ink); color:var(--paper);
+    padding:calc(36px + env(safe-area-inset-top)) 20px 28px;
+    border-bottom:6px solid var(--amber);
+  }
+  .hero-inner{ max-width:1080px; margin:0 auto; }
+  .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--amber); font-weight:700; margin-bottom:10px;
+  }
+  h1.display{
+    font-size:clamp(26px,4vw,40px); font-weight:600; margin:0 0 4px;
+    line-height:1.15;
+  }
+  .hero-sub{
+    color:#C9D0C6; font-size:14.5px; margin-top:6px; max-width:640px;
+  }
+  .hero-sub.ar{ margin-top:2px; color:#C9D0C6; font-size:15px; }
+
+  /* the equation / calculator */
+  .equation{
+    margin-top:22px;
+    background:rgba(238,240,233,.06);
+    border:1px solid rgba(238,240,233,.18); border-radius:16px;
+    padding:20px 22px 18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .equation .eq-part{ display:inline-flex; align-items:center; gap:10px; }
+  .equation .term, .equation .out{
+    font-family:'Public Sans',sans-serif; font-size:13px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--paper);
+  }
+  .equation input{
+    width:88px; font-family:'Public Sans',sans-serif; font-size:14px; font-weight:600;
+    background:var(--paper); color:var(--ink-soft); border:1.5px solid var(--amber);
+    border-radius:7px; padding:7px 10px; text-align:center;
+  }
+  .equation input::placeholder{ color:#8B958E; font-weight:500; font-size:13px; }
+  .equation .kg-tag{
+    font-size:10.5px; font-weight:700; color:#C9D0C6;
+    background:rgba(238,240,233,.06); border:1px solid rgba(238,240,233,.14);
+    border-radius:20px; padding:3px 9px; margin-inline-start:-2px;
+  }
+  .equation .op{
+    color:var(--amber); font-size:24px; font-weight:800; line-height:1; flex:none;
+  }
+  .equation .hint{
+    width:100%; font-size:12px; color:#AEB6A9; margin-top:16px; line-height:1.6;
+  }
+  .equation .hint.ar{ color:#AEB6A9; }
+
+  /* toggle button for age -> weight estimator */
+  .age-calc-toggle{
+    margin-top:18px; display:inline-flex; align-items:center; gap:10px;
+    cursor:pointer; background:rgba(27,110,98,.22); border:1px solid rgba(150,197,187,.35);
+    border-radius:24px; padding:10px 18px 10px 10px; font-family:'Public Sans',sans-serif;
+    font-size:13px; font-weight:700; color:var(--paper); transition:.15s;
+    box-shadow:0 0 0 0 rgba(27,110,98,.5);
+    animation: age-toggle-pulse 2.4s ease-out infinite;
+  }
+  .age-calc-toggle:hover{ background:rgba(27,110,98,.32); animation-play-state:paused; }
+  .age-calc-toggle .icon-badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:26px; height:26px; border-radius:50%; background:var(--teal);
+    color:var(--paper); font-size:14px; flex:none;
+  }
+  .age-calc-toggle .ar{ font-size:12.5px; font-weight:400; color:#C9D0C6; }
+  .age-calc-toggle .tap-wrap{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    align-self:center; text-align:center; gap:1px;
+  }
+  .age-calc-toggle .tap-label{
+    font-size:9px; font-weight:700; letter-spacing:.03em; color:#C9D0C6; white-space:nowrap;
+    text-align:center;
+  }
+  .age-calc-toggle .tap-label.ar{ font-size:9.5px; font-weight:700; }
+  .age-calc-toggle .chevron{
+    font-size:16px; font-weight:700; color:var(--teal-tint); line-height:1;
+    animation: age-toggle-bounce 1.6s ease-in-out infinite; transform-origin:center;
+    display:block; text-align:center;
+  }
+  .age-calc-toggle.open .chevron{ transform:rotate(180deg); animation:none; }
+  .age-calc-toggle.open .tap-label{ display:none; }
+  @keyframes age-toggle-pulse{
+    0%{ box-shadow:0 0 0 0 rgba(27,110,98,.45); }
+    70%{ box-shadow:0 0 0 9px rgba(27,110,98,0); }
+    100%{ box-shadow:0 0 0 0 rgba(27,110,98,0); }
+  }
+  @keyframes age-toggle-bounce{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(4px); }
+  }
+
+  /* age -> weight estimator */
+  .age-calc{
+    margin-top:16px; background:var(--ink);
+    border:1px solid rgba(238,240,233,.12); border-radius:16px;
+    padding:22px 24px 20px; position:relative; overflow:hidden;
+  }
+  .age-calc.collapsed{ display:none; }
+
+  .age-calc-row{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+
+  .age-calc input#ageInput{
+    width:100px; font-family:'Public Sans',sans-serif; font-size:14px; font-weight:600;
+    background:var(--paper); color:var(--ink-soft); border:1.5px solid var(--amber);
+    border-radius:8px; padding:9px 12px;
+  }
+  .age-calc input#ageInput::placeholder{ color:#8B958E; font-weight:500; }
+
+  .age-unit-wrap{ position:relative; display:inline-flex; }
+  select.age-unit{
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    font-family:'Public Sans',sans-serif; font-size:13px; font-weight:500;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--amber);
+    border-radius:8px; padding:9px 28px 9px 12px; cursor:pointer;
+  }
+  .age-unit-wrap::after{
+    content:"⌄"; position:absolute; inset-inline-end:11px; top:50%; transform:translateY(-52%);
+    color:var(--ink-soft); font-size:13px; pointer-events:none;
+  }
+
+  .age-approx{ display:flex; align-items:center; gap:7px; margin-inline-start:2px; }
+  .age-approx .eq{ font-family:'Public Sans',sans-serif; font-size:14px; color:#7C877E; }
+  .age-approx .val{ font-family:'Public Sans',sans-serif; font-size:16px; font-weight:700; color:var(--paper); }
+  .age-approx .unit{
+    font-size:11px; font-weight:700; color:#9CA69D;
+    background:rgba(238,240,233,.06); border:1px solid rgba(238,240,233,.14);
+    border-radius:20px; padding:3px 9px;
+  }
+
+  .age-calc .age-btn{
+    margin-top:18px; cursor:pointer; font-family:'Public Sans',sans-serif; font-size:14px; font-weight:700;
+    background:rgba(184,132,46,.4); color:var(--paper); border:1px solid rgba(184,132,46,.55);
+    border-radius:10px; padding:12px 20px; white-space:nowrap; transition:.15s; letter-spacing:.01em;
+  }
+  .age-calc .age-btn:hover{ background:rgba(184,132,46,.55); }
+  .age-calc .age-btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .formula-rail{ display:flex; gap:6px; margin-top:14px; flex-wrap:wrap; }
+  .formula-chip{
+    flex:1; min-width:150px; font-size:11px; color:#AEB6A9; text-align:center;
+    background:rgba(238,240,233,.04); border:1px solid rgba(238,240,233,.14);
+    border-radius:6px; padding:6px 8px; transition:.2s; font-family:'JetBrains Mono',monospace;
+  }
+  .formula-chip.active{
+    color:var(--paper); background:rgba(27,110,98,.4); border-color:var(--teal);
+    box-shadow:0 0 0 1px var(--teal) inset;
+  }
+
+  .age-calc .hint{ width:100%; font-size:11.5px; color:#7C877E; margin-top:14px; }
+  .age-calc .hint.ar{ color:#7C877E; }
+
+
+  /* syringe tick divider */
+  .ticks{
+    height:10px; margin:14px 0;
+    background: repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 10px),
+                repeating-linear-gradient(to right, var(--line) 0 1px, transparent 1px 50px);
+    background-size: 100% 6px, 100% 10px;
+    background-position: bottom, bottom;
+    background-repeat: repeat-x;
+    opacity:.7;
+  }
+
+  /* ---------- SEARCH ---------- */
+  .search-bar{
+    position:sticky; top:0; z-index:20;
+    background:var(--paper); border-bottom:1px solid var(--line);
+    padding:calc(12px + env(safe-area-inset-top)) 20px 12px;
+  }
+  .search-bar .wrap{
+    max-width:1080px; margin:0 auto; display:flex; align-items:center; gap:10px;
+    background:#fff; border:1.5px solid var(--line); border-radius:8px; padding:9px 14px;
+  }
+  .search-bar .wrap:focus-within{ border-color:var(--amber); }
+  .search-bar .icon{ color:var(--ink-soft); font-size:14px; }
+  .search-bar input{
+    flex:1; border:none; outline:none; font-size:14.5px; background:transparent;
+    font-family:'Public Sans',sans-serif; color:var(--ink);
+  }
+  .search-bar .count{ font-size:11.5px; color:var(--ink-soft); white-space:nowrap; }
+  .search-bar .clear-btn{
+    cursor:pointer; color:var(--ink-soft); font-size:12px; border:1px solid var(--line);
+    border-radius:20px; padding:3px 10px; background:var(--paper); display:none; white-space:nowrap;
+  }
+  .search-bar .clear-btn.show{ display:block; }
+  .no-results{ display:none; text-align:center; padding:50px 20px; color:var(--ink-soft); }
+  .no-results .display{ font-size:17px; color:var(--ink); margin-bottom:4px; }
+
+  /* ---------- LAYOUT ---------- */
+  main{ max-width:1080px; margin:0 auto; padding:30px 20px 60px; }
+
+  .section{ margin-top:36px; }
+  .section-head{
+    display:flex; align-items:baseline; gap:12px; margin-bottom:14px;
+    border-bottom:2px solid var(--accent,var(--ink)); padding-bottom:8px;
+  }
+  .section-head h2{
+    font-family:'Fraunces',serif; font-size:21px; margin:0; font-weight:600;
+    color:var(--accent,var(--ink));
+  }
+  .section-head .ar{ font-size:14px; color:var(--ink-soft); }
+
+  .med-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:16px;
+  }
+
+  .med-card{
+    background:#fff; border:1px solid var(--line); border-radius:6px;
+    border-top:5px solid var(--accent,var(--ink));
+    padding:16px 18px 14px; position:relative;
+  }
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .med-name{ font-family:'Fraunces',serif; font-size:19px; font-weight:600; line-height:1.2; }
+  .pom-tag{ color:var(--red); font-weight:800; font-size:12px; margin-inline-start:6px; }
+  .med-generic{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .chip{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    background:var(--tint,var(--paper-deep)); color:var(--accent,var(--ink));
+    padding:3px 8px; border-radius:20px; white-space:nowrap;
+  }
+  .gen-dots{ display:inline-flex; gap:3px; vertical-align:middle; margin-inline-start:6px; }
+  .gen-dots i{ width:6px; height:6px; border-radius:50%; background:var(--line); display:inline-block; }
+  .gen-dots i.on{ background:var(--amber); }
+
+  .dose-line{ font-size:13px; color:var(--ink-soft); margin-top:10px; line-height:1.45; }
+  .dose-line b{ color:var(--ink); font-weight:600; }
+
+  .conc-row{
+    display:grid; grid-template-columns:1fr auto; gap:2px 10px;
+    align-items:center;
+    border-top:1px dashed var(--line); padding:8px 0;
+  }
+  .conc-row:last-child{ padding-bottom:0; }
+  .conc-label{ font-size:12.5px; font-weight:600; }
+  .factor-formula{ font-size:11.5px; color:var(--ink-soft); grid-column:1; }
+  .factor-na{ font-size:11px; color:var(--ink-soft); font-style:italic; grid-column:1; }
+  .dose-result{
+    grid-column:2; grid-row:1 / span 2; justify-self:end; align-self:center;
+    font-size:15px; font-weight:700; color:var(--ink-soft);
+    background:var(--paper); border:1px solid var(--line); border-radius:5px;
+    padding:4px 9px; min-width:78px; text-align:center; transition:.15s;
+  }
+  .dose-result.active{ color:var(--accent,var(--ink)); background:var(--tint,var(--paper)); border-color:var(--accent,var(--ink)); }
+  .freq-tag{ font-size:10.5px; color:var(--ink-soft); grid-column:2; justify-self:end; margin-top:2px;}
+
+  .warn{
+    margin-top:10px; display:flex; align-items:center; gap:6px;
+    background:var(--red-tint); color:var(--red); border:1px solid var(--red);
+    border-radius:5px; padding:5px 9px; font-size:11.5px; font-weight:700;
+  }
+
+  .strength-row{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 2px; }
+  .vial-group{ margin-top:12px; padding-top:10px; border-top:2px solid var(--line); }
+  .vial-group:first-of-type{ margin-top:10px; }
+  .vial-group-label{
+    font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+    color:var(--accent,var(--ink)); background:var(--tint,var(--paper-deep));
+    display:inline-block; padding:2px 8px; border-radius:4px; margin-bottom:4px;
+  }
+  .vial-group .conc-row:first-of-type{ border-top:none; padding-top:2px; }
+  .vial-group .route-row:first-of-type{ border-top:none; padding-top:2px; }
+  .strength-chip{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px;
+    background:var(--paper); border:1px solid var(--line); border-radius:5px; padding:3px 9px;
+  }
+  .route-row{
+    display:flex; gap:8px; align-items:flex-start;
+    border-top:1px dashed var(--line); padding:8px 0; font-size:12px; color:var(--ink-soft); line-height:1.5;
+  }
+  .route-badge{
+    flex:none; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700;
+    padding:2px 7px; border-radius:4px; margin-top:1px;
+  }
+  .route-badge.iv{ background:var(--indigo-tint); color:var(--indigo); }
+  .route-badge.im{ background:var(--slate-tint); color:var(--slate); }
+
+  .admin-note{
+    margin-top:10px; padding-top:9px; border-top:1px dashed var(--line);
+    font-size:11.5px; color:var(--ink-soft); line-height:1.7;
+  }
+  .admin-note b{ color:var(--ink); font-weight:700; }
+
+  footer{
+    max-width:1080px; margin:0 auto; padding:0 20px calc(50px + env(safe-area-inset-bottom));
+    color:var(--ink-soft); font-size:12px; line-height:1.7;
+  }
+  footer .note{ border-top:1px solid var(--line); padding-top:16px; }
+  footer .note.ar{ margin-top:4px; }
+  footer .credits{
+    margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-soft);
+  }
+  footer .credits-name{ font-weight:700; color:var(--ink); }
+  footer .credits-sep{ color:var(--line); }
+
+  .copyright{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.02em;
+  }
+  header .copyright{
+    color:#AEB6A9; margin-bottom:14px; opacity:.85;
+  }
+  footer .copyright{
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--line);
+    color:var(--ink-soft); text-align:center;
+  }
+
+  @media print{
+    .search-bar{ display:none !important; }
+    .equation{ display:none !important; }
+    .dose-result{ display:none !important; }
+    .conc-row{ grid-template-columns: 1fr auto; }
+    .freq-tag{ grid-row:1; grid-column:2; margin-top:0; align-self:center; }
+    .med-grid{ grid-template-columns:repeat(2,1fr); }
+    header.hero{ background:#fff !important; color:#000 !important; border-bottom-color:#000; }
+    .eyebrow, .hero-sub, .hero-sub.ar{ color:#333 !important; }
+    body{ background:#fff; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="copyright">© 2026 Farmakon Course — All Rights Reserved.<br>Prepared and designed by PH. Ahmed Hassan</div>
+    <div class="eyebrow">Pediatric Reference · مرجع جرعات الأطفال</div>
+    <h1 class="display">Antibiotic Dosing — Syrup, Suspension &amp; Injectable</h1>
+    <div class="hero-sub ar">جدول جرعات المضادات الحيوية — شراب ومعلق ومضادات وريدية/عضلية للأطفال</div>
+
+    <div class="ticks"></div>
+
+    <div id="ageCalcToggle" class="age-calc-toggle">
+      <span class="icon-badge">⚖</span>
+      <span>Don't know the weight? Estimate it from age</span>
+      <span class="tap-wrap">
+        <span class="chevron">↓</span>
+        <span class="tap-label ar">اضغط هنا</span>
+      </span>
+      <span class="ar">لا تعرف الوزن؟ قدّره من العمر</span>
+    </div>
+
+    <div class="age-calc collapsed" id="ageCalc">
+      <div class="age-calc-row">
+        <input id="ageInput" type="number" inputmode="decimal" min="0" step="0.5" placeholder="Age">
+        <div class="age-unit-wrap">
+          <select id="ageUnit" class="age-unit">
+            <option value="years">years / سنوات</option>
+            <option value="months">months / أشهر</option>
+          </select>
+        </div>
+        <div class="age-approx">
+          <span class="eq">≈</span>
+          <span class="val" id="ageOut">—</span>
+          <span class="unit">kg</span>
+        </div>
+      </div>
+
+      <button type="button" id="useAgeWeight" class="age-btn" disabled>Use this weight</button>
+
+      <div class="formula-rail">
+        <div class="formula-chip" data-range="infant">under 1y &nbsp;·&nbsp; (mo + 9) ÷ 2</div>
+        <div class="formula-chip" data-range="child">1–8y &nbsp;·&nbsp; (yr × 2) + 8</div>
+        <div class="formula-chip" data-range="older">8y+ &nbsp;·&nbsp; (yr × 2) + 9</div>
+      </div>
+
+      <div class="hint">Estimated weight from age — use the child's actual measured weight whenever it's available.</div>
+      <div class="hint ar">تقدير للوزن حسب العمر — استخدم الوزن الفعلي المقاس متى ما توفر.</div>
+    </div>
+
+    <div class="equation">
+      <div class="eq-part">
+        <span class="term">Weight</span>
+        <input id="weightInput" type="number" inputmode="decimal" min="0" step="0.1" placeholder="kg">
+        <span class="kg-tag">kg</span>
+      </div>
+      <span class="op">×</span>
+      <span class="term">Factor</span>
+      <div class="eq-part">
+        <span class="op">=</span>
+        <span class="out">Dose per administration</span>
+      </div>
+      <div class="hint">Enter the child's weight once — every card below updates automatically. "×N/day" is the number of doses per day, not part of the multiplication.</div>
+      <div class="hint ar">أدخل وزن الطفل بالكيلوغرام مرة واحدة ليتم حساب جميع الجرعات تلقائياً. "×N/day" تعني عدد مرات الإعطاء يومياً وليست جزءاً من عملية الضرب.</div>
+    </div>
+  </div>
+</header>
+
+<div class="search-bar">
+  <div class="wrap">
+    <span class="icon">🔍</span>
+    <input id="drugSearch" type="text" placeholder="Search medication… ابحث عن دواء (Amoxicillin, Augmentin, Cefixime…)">
+    <span class="count" id="searchCount"></span>
+    <span class="clear-btn" id="clearSearch">✕ Clear</span>
+  </div>
+</div>
+
+<main>
+  <div class="no-results" id="noResults">
+    <div class="display">No medication matches your search</div>
+    <div class="ar">لا يوجد دواء مطابق لبحثك</div>
+  </div>
+
+  <!-- PENICILLINS -->
+  <section class="section" style="--accent:var(--teal); --tint:var(--teal-tint);">
+    <div class="section-head">
+      <h2>Penicillins</h2>
+      <span class="ar">البنسلينات</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--teal); --tint:var(--teal-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Amoxicillin</div></div>
+          <span class="chip">Penicillin</span>
+        </div>
+        <div class="dose-line"><b>40–45 mg/kg/day</b> — mild to infection &nbsp;·&nbsp; <b>80–90 mg/kg/day</b> — severe infection</div>
+        <div class="conc-row" data-factor="0.5" data-freq="3">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.25" data-freq="3">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--teal); --tint:var(--teal-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Amoxicillin/Clavulanic acid</div><div class="med-generic">Augmentin®</div></div>
+          <span class="chip">Penicillin</span>
+        </div>
+        <div class="dose-line">
+          <b>4:1</b> — 20–40 mg(amox)/kg/day divided q8hr.<br>
+          <b>7:1</b> — 25–45 mg(amox)/kg/day divided q12hr.<br>
+          <b>14:1</b> — 90 mg(amox)/kg/day  divided q12hr.
+        </div>
+        <div class="conc-row" data-factor="0.25" data-freq="3">
+          <div class="conc-label mono">156 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.15" data-freq="3">
+          <div class="conc-label mono">312 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.15</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.2" data-freq="2">
+          <div class="conc-label mono">457 mg / 5 mL <span style="color:var(--red)">BID</span></div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.35" data-freq="2">
+          <div class="conc-label mono">642 mg / 5 mL <span style="color:var(--red)">BID</span> · <i>High dose regimen</i></div>
+          <div class="factor-formula mono">kg × 0.35</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CEPHALOSPORINS -->
+  <section class="section" style="--accent:var(--amber); --tint:var(--amber-tint);">
+    <div class="section-head">
+      <h2>Cephalosporins</h2>
+      <span class="ar">السيفالوسبورينات</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cephalexin <span class="gen-dots"><i class="on"></i><i></i><i></i></span></div><div class="med-generic">Keflex®</div></div>
+          <span class="chip">1st Gen</span>
+        </div>
+        <div class="dose-line"><b>25–50 mg/kg/day</b> divided q6–8–12hr</div>
+        <div class="conc-row" data-factor="0.4" data-freq="4">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.4</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.2" data-freq="4">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefadroxil <span class="gen-dots"><i class="on"></i><i></i><i></i></span></div><div class="med-generic">Roxil®</div></div>
+          <span class="chip">1st Gen</span>
+        </div>
+        <div class="dose-line"><b>30 mg/kg/day</b> divided q12hr, for 10 days</div>
+        <div class="conc-row" data-factor="0.3" data-freq="2">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.3</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefaclor <span class="gen-dots"><i class="on"></i><i class="on"></i><i></i></span></div></div>
+          <span class="chip">2nd Gen</span>
+        </div>
+        <div class="dose-line"><b>20–40 mg/kg/day</b> divided q8–12hr</div>
+        <div class="conc-row" data-factor="0.6" data-freq="2">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.6</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.3" data-freq="2">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.3</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.2" data-freq="2">
+          <div class="conc-label mono">375 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefuroxime <span class="gen-dots"><i class="on"></i><i class="on"></i><i></i></span></div></div>
+          <span class="chip">2nd Gen</span>
+        </div>
+        <div class="dose-line"><b>30 mg/kg/day</b> divided q12hr</div>
+        <div class="conc-row" data-factor="0.6" data-freq="2">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.6</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.3" data-freq="2">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.3</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="warn">⚠ Not before 3 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefdinir <span class="gen-dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></div></div>
+          <span class="chip">3rd Gen</span>
+        </div>
+        <div class="dose-line"><b>14 mg/kg/day</b> divided q12–24hr, for 5–10 days</div>
+        <div class="conc-row" data-factor="0.56" data-freq="1">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.56</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">q24h</div>
+        </div>
+        <div class="conc-row" data-factor="0.28" data-freq="2">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.28</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefixime <span class="gen-dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></div></div>
+          <span class="chip">3rd Gen</span>
+        </div>
+        <div class="dose-line"><b>8 mg/kg/day</b> divided q12–24hr, for 7–10 days</div>
+        <div class="conc-row" data-factor="0.4" data-freq="1">
+          <div class="conc-label mono">100 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.4</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">q24h</div>
+        </div>
+        <div class="conc-row" data-factor="0.2" data-freq="2">
+          <div class="conc-label mono">100 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefpodoxime <span class="gen-dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></div></div>
+          <span class="chip">3rd Gen</span>
+        </div>
+        <div class="dose-line"><b>10 mg/kg/day</b> divided q12hr</div>
+        <div class="conc-row" data-factor="0.5" data-freq="2">
+          <div class="conc-label mono">50 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.25" data-freq="2">
+          <div class="conc-label mono">100 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="warn">⚠ Not before 2 months</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MACROLIDES -->
+  <section class="section" style="--accent:var(--plum); --tint:var(--plum-tint);">
+    <div class="section-head">
+      <h2>Macrolides</h2>
+      <span class="ar">الماكروليدات</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--plum); --tint:var(--plum-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Azithromycin</div></div>
+          <span class="chip">Macrolide</span>
+        </div>
+        <div class="dose-line"><b>5–12 mg/kg/day</b> q24hr, for 3 days</div>
+        <div class="conc-row" data-factor="0.25" data-freq="1">
+          <div class="conc-label mono">200 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--plum); --tint:var(--plum-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Clarithromycin</div></div>
+          <span class="chip">Macrolide</span>
+        </div>
+        <div class="dose-line"><b>7.5 mg/kg/dose</b> q12hr</div>
+        <div class="conc-row" data-factor="0.15" data-freq="2">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.15</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--plum); --tint:var(--plum-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Erythromycin</div></div>
+          <span class="chip">Macrolide</span>
+        </div>
+        <div class="dose-line"><b>40–50 mg/kg/day</b> divided q6–8hr</div>
+        <div class="conc-row" data-factor="0.4" data-freq="4">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.4</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.2" data-freq="4">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OTHER AGENTS -->
+  <section class="section" style="--accent:var(--slate); --tint:var(--slate-tint);">
+    <div class="section-head">
+      <h2>Other Agents</h2>
+      <span class="ar">أدوية أخرى</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--slate); --tint:var(--slate-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Metronidazole</div><div class="med-generic">Flagyl®</div></div>
+          <span class="chip">Antiprotozoal</span>
+        </div>
+        <div class="dose-line"><b>15–50 mg/kg/day</b> divided q8hr</div>
+        <div class="conc-row" data-factor="0.4" data-freq="3">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.4</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.25" data-freq="3">
+          <div class="conc-label mono">200 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--slate); --tint:var(--slate-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cotrimoxazole</div><div class="med-generic">Methprim® (TMP/SMX)</div></div>
+          <span class="chip">Sulfonamide</span>
+        </div>
+        <div class="dose-line"><b>8–12 mg(TMP)/kg/day</b> divided q12hr</div>
+        <div class="conc-row" data-factor="0.5" data-freq="2">
+          <div class="conc-label mono">TMP 40 / SMX 200 per 5 mL</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="warn">⚠ Not before 2 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--slate); --tint:var(--slate-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Nalidixic Acid</div></div>
+          <span class="chip">Quinolone</span>
+        </div>
+        <div class="dose-line"><b>8.25–13.75 mg/kg/dose</b> q6hr</div>
+        <div class="conc-row" data-factor="0.2">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">q6hr</div>
+        </div>
+        <div class="conc-row" data-factor="0.16">
+          <div class="conc-label mono">300 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.16</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">q6hr</div>
+        </div>
+        <div class="warn">⚠ Not before 3 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--slate); --tint:var(--slate-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Nitrofurantoin</div></div>
+          <span class="chip">Urinary</span>
+        </div>
+        <div class="dose-line"><b>5–7 mg/kg/day</b> divided q6hr</div>
+        <div class="conc-row" data-factor="0.3" data-freq="4">
+          <div class="conc-label mono">25 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.3</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+        <div class="warn">⚠ Not before 1 month</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--slate); --tint:var(--slate-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Furazolidone<span class="pom-tag">(POM)</span></div></div>
+          <span class="chip">Nitrofuran</span>
+        </div>
+        <div class="dose-line"><b>1.25 mg/kg/dose</b> q6hr, for 3–7 days (7–10 days in giardiasis)</div>
+        <div class="conc-row" data-factor="0.375" data-freq="4">
+          <div class="conc-label mono">50 mg / 15 mL (16.6 mg/5 mL)</div>
+          <div class="factor-formula mono">kg × 0.375</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+        <div class="warn">⚠ Not before 1 month</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- INJECTABLE (IV / IM) -->
+  <section class="section" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+    <div class="section-head">
+      <h2>Injectable — IV / IM</h2>
+      <span class="ar">الحقن الوريدي والعضلي</span>
+    </div>
+    <div class="warn ar" style="margin-bottom:16px; width:100%; box-sizing:border-box; font-size:13px; line-height:1.6; padding:9px 12px;">⚠ ملاحظة: لم تتم إضافة حاسبة الجرعات التلقائية للحقن — التراكيز أدناه معروضة للتوضيح فقط (ملغ/مل بعد التحضير/التخفيف)، ويجب حساب جرعة كل طفل يدويًا بناءً على الجرعة الموصوفة فعليًا (ملغ/كغ) ومطابقة حجم المذيب المذكور بالضبط.</div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Amoxicillin</div></div>
+          <span class="chip">Vial</span>
+        </div>
+        <div class="dose-line">
+          <b>Mild–moderate:</b> 25 mg/kg/dose every 8 hours IV (≈75 mg/kg/day)<br>
+          <b>Severe infections:</b> 50 mg/kg/dose every 8 hours IV (≈150 mg/kg/day)
+        </div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg</span>
+          <span class="strength-chip">1000 mg</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 500 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>500 mg in 10 mL WFI or N.S — IV direct or dilute in 100 mL N.S infusion</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 2.5 mL N.S or Lidocaine 1%</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1000 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1000 mg in 20 mL N.S — IV direct or dilute into a 100 mL N.S infusion</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 2.5 mL N.S or Lidocaine 1%</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> N.S 0.9%<br><b>IV:</b> Inject over 3–4 min; Infuse over 30–60 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Amoxicillin/Clavulanic acid</div><div class="med-generic">Augmentin®</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line">
+          <b>0–3 months:</b> 30 mg/kg/dose q12hr<br>
+          <b>3 months–12 years:</b> 30 mg/kg/dose q8hr<br>
+          <b>&gt;12 years:</b> 1.2 g q8hr
+        </div>
+        <div class="strength-row">
+          <span class="strength-chip">600 mg</span>
+          <span class="strength-chip">1.2 g</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 600 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>600 mg in 10 mL WFI or N.S — IV direct or dilute in 100 mL N.S</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1.2 g</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1.2 g in 20 mL WFI or N.S — IV direct or dilute in 100 mL N.S</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> N.S 0.9%<br><b>IV:</b> Inject over 3–4 min; Infuse over 30–40 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Ceftriaxone</div></div>
+          <span class="chip">Vial</span>
+        </div>
+        <div class="dose-line"><b>50–75 mg/kg/day</b> divided q12H</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg</span>
+          <span class="strength-chip">1 g</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 500 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>500 mg in 5 mL WFI or N.S — IV direct or dilute into a 100 mL N.S infusion</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 3.5 mL Lidocaine 1%</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1 g</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1 g in 10 mL WFI or N.S — IV direct or dilute into a 100 mL N.S infusion</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 3.5 mL Lidocaine 1%</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Inject over 2–4 min; Infuse over at least 30 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefotaxime</div></div>
+          <span class="chip">Vial</span>
+        </div>
+        <div class="dose-line"><b>150–180 mg/kg/day</b> divided q6–8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg</span>
+          <span class="strength-chip">1 g</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 500 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>500 mg in 10 mL WFI or N.S — or dilute into a 100 mL N.S infusion</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 3 mL Lidocaine 1% or N.S</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1 g</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1 g in 10 mL WFI or N.S — or dilute into a 100 mL N.S infusion</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 3 mL Lidocaine 1% or N.S</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Inject over 3–5 min; Infuse over 20–60 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cefepime</div></div>
+          <span class="chip">Vial</span>
+        </div>
+        <div class="dose-line"><b>50 mg/kg/dose</b>, q8–12hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">1 g</span>
+        </div>
+        <div class="route-row"><span class="route-badge iv">IV</span><span>1 g in 10 mL WFI or N.S — IV direct or dilute into a 100 mL N.S infusion</span></div>
+        <div class="route-row"><span class="route-badge im">IM</span><span>in 3 mL Lidocaine 1% or N.S</span></div>
+        <div class="admin-note"><b>Compatible with:</b> IV: NaCl 0.9%, Gluc 5%, Gluc-NaCl; IM: WFI, N.S, Gluc 5%, Lidocaine 0.5% or 1%<br><b>IV:</b> Inject over 3–4 min; Infuse over 30 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Gentamicin</div></div>
+          <span class="chip">Amp</span>
+        </div>
+        <div class="dose-line"><b>2–2.5 mg/kg/dose</b>, q8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">80 mg / 2 mL</span>
+          <span class="strength-chip">20 mg / 2 mL</span>
+        </div>
+        <div class="route-row"><span class="route-badge iv">IV</span><span>direct, or diluted in 100 mL N.S</span></div>
+        <div class="route-row"><span class="route-badge im">IM</span><span>direct</span></div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Inject over 3–5 min; Infuse over 30–60 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Amikacin</div></div>
+          <span class="chip">Vial &amp; Amp</span>
+        </div>
+        <div class="dose-line"><b>15–22.5 mg/kg/day</b> divided q8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg / 2 mL</span>
+          <span class="strength-chip">100 mg / 2 mL</span>
+        </div>
+        <div class="route-row"><span class="route-badge iv">IV</span><span>direct, or diluted in 100 mL N.S</span></div>
+        <div class="route-row"><span class="route-badge im">IM</span><span>direct</span></div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%<br><b>IV:</b> Inject over 2–3 min; Infuse over 30 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Metronidazole</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line"><b>22.5–40 mg/kg/day</b> divided q8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg / 100 mL</span>
+        </div>
+        <div class="route-row" style="border-top:none; padding-top:0;"><span class="route-badge iv">IV</span><span>IV only — ready-to-use infusion bag, no reconstitution</span></div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Infuse over 20 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Vancomycin</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line"><b>45–60 mg/kg/day</b> divided q6–8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg</span>
+          <span class="strength-chip">1000 mg</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 500 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>500 mg in 10 mL WFI — then diluted in 100 mL N.S</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1000 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1000 mg in 20 mL WFI — then diluted in 100 mL N.S</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%<br><b>IV:</b> Infuse 500 mg over a minimum 60 min and 1000 mg over 2 hr</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Meropenem</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line"><b>20 mg/kg/dose</b>, q8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg</span>
+          <span class="strength-chip">1000 mg</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 500 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>500 mg in 10 mL WFI — or diluted in 100 mL N.S</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1000 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1000 mg in 20 mL WFI — or diluted in 100 mL N.S</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%<br><b>IV:</b> Inject over 5 min; Infuse over 15–30 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Imipenem / Cilastatin</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line"><b>15–25 mg/kg/dose</b>, q6hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500/500 mg</span>
+        </div>
+        <div class="route-row" style="border-top:none; padding-top:0;"><span class="route-badge iv">IV</span><span>500 mg in 10 mL N.S — then diluted in 100 mL N.S</span></div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%<br><b>IV:</b> Infuse over 20–30 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Clindamycin</div></div>
+          <span class="chip">Amp</span>
+        </div>
+        <div class="dose-line"><b>600 mg – 2.7 g/day</b> divided into 2–4 doses</div>
+        <div class="strength-row">
+          <span class="strength-chip">600 mg</span>
+          <span class="strength-chip">300 mg</span>
+        </div>
+        <div class="route-row"><span class="route-badge iv">IV</span><span>diluted in 100 mL N.S</span></div>
+        <div class="route-row"><span class="route-badge im">IM</span><span>direct</span></div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Infuse 300 mg over 15 min and 600 mg over 30 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Moxifloxacin</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line">
+          <b>3 months–2 years:</b> 6 mg/kg/dose q12hr (max 200 mg/dose)<br>
+          <b>2–6 years:</b> 5 mg/kg/dose q12hr (max 200 mg/dose)<br>
+          <b>6–12 years:</b> 4 mg/kg/dose q12hr (max 200 mg/dose)<br>
+          <b>12–18 years, &lt;45 kg:</b> 4 mg/kg/dose q12hr (max 200 mg/dose)<br>
+          <b>12–18 years, &gt;45 kg:</b> 400 mg q24hr<br>
+          <b>&gt;18 years:</b> 400 mg q24hr
+        </div>
+        <div class="strength-row">
+          <span class="strength-chip">400 mg / 250 mL</span>
+        </div>
+        <div class="route-row" style="border-top:none; padding-top:0;"><span class="route-badge iv">IV</span><span>direct — ready-to-use infusion bag, no reconstitution</span></div>
+        <div class="admin-note"><b>IV:</b> Infuse over 60 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Ciprofloxacin</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line"><b>10 mg/kg/dose</b>, q8–12hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">200 mg / 100 mL</span>
+        </div>
+        <div class="route-row" style="border-top:none; padding-top:0;"><span class="route-badge iv">IV</span><span>direct — ready-to-use infusion bag, no reconstitution</span></div>
+        <div class="admin-note"><b>IV:</b> Infuse over 60 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Levofloxacin</div></div>
+          <span class="chip">Vial · IV only</span>
+        </div>
+        <div class="dose-line"><b>&gt;5 years:</b> 10 mg/kg/dose q24hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg / 100 mL</span>
+        </div>
+        <div class="route-row" style="border-top:none; padding-top:0;"><span class="route-badge iv">IV</span><span>direct — ready-to-use infusion bag, no reconstitution</span></div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Infuse over at least 60 min</div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+
+<footer>
+  <div class="note">Quick recalculation reference only — always verify the maximum daily dose, clinical context, and this same information against the original source before dispensing or administering.</div>
+  <div class="note ar">مرجع سريع لإعادة الحساب فقط — يرجى دائماً مراجعة الجرعة القصوى اليومية والحالة السريرية وهذه المعلومات نفسها في المصدر الأصلي قبل الصرف أو الإعطاء.</div>
+  <div class="copyright">© 2026 Farmakon Course — All Rights Reserved.<br>Prepared and designed by PH. Ahmed Hassan</div>
+</footer>
+
+<script>
+  const input = document.getElementById('weightInput');
+  function updateDoses(){
+    const w = parseFloat(input.value);
+    document.querySelectorAll('[data-factor]').forEach(row=>{
+      const factor = parseFloat(row.dataset.factor);
+      const out = row.querySelector('.dose-result');
+      if(!isNaN(w) && w>0){
+        out.textContent = (w*factor).toFixed(2) + ' mL';
+        out.classList.add('active');
+      } else {
+        out.textContent = '— mL/dose';
+        out.classList.remove('active');
+      }
+    });
+    document.querySelectorAll('[data-factor-min]').forEach(row=>{
+      const fMin = parseFloat(row.dataset.factorMin);
+      const fMax = parseFloat(row.dataset.factorMax);
+      const out = row.querySelector('.dose-result');
+      if(!isNaN(w) && w>0){
+        out.textContent = (w*fMin).toFixed(2) + '–' + (w*fMax).toFixed(2) + ' mL';
+        out.classList.add('active');
+      } else {
+        out.textContent = '— mL/dose';
+        out.classList.remove('active');
+      }
+    });
+  }
+  input.addEventListener('input', updateDoses);
+  updateDoses();
+
+  const ageCalcToggle = document.getElementById('ageCalcToggle');
+  const ageCalc = document.getElementById('ageCalc');
+  ageCalcToggle.addEventListener('click', ()=>{
+    ageCalc.classList.toggle('collapsed');
+    ageCalcToggle.classList.toggle('open', !ageCalc.classList.contains('collapsed'));
+  });
+
+  const ageInput = document.getElementById('ageInput');
+  const unitSelect = document.getElementById('ageUnit');
+  const ageOut = document.getElementById('ageOut');
+  const useAgeWeightBtn = document.getElementById('useAgeWeight');
+  const formulaChips = document.querySelectorAll('.formula-chip');
+  let ageUnitValue = 'years';
+
+  unitSelect.addEventListener('change', ()=>{
+    ageUnitValue = unitSelect.value;
+    updateAgeEstimate();
+  });
+
+  function estimateWeightFromAge(){
+    const val = parseFloat(ageInput.value);
+    if(isNaN(val) || val < 0) return null;
+    const months = ageUnitValue === 'months' ? val : val * 12;
+    const years = months / 12;
+    let weight, range;
+    if(months < 12){
+      weight = (months + 9) / 2;                // < 1 year
+      range = 'infant';
+    } else if(years <= 8){
+      weight = (years * 2) + 8;                  // 1–8 years
+      range = 'child';
+    } else {
+      weight = (years * 2) + 9;                  // > 8 years
+      range = 'older';
+    }
+    return { weight, range };
+  }
+
+  function updateAgeEstimate(){
+    const result = estimateWeightFromAge();
+    formulaChips.forEach(chip=>{
+      chip.classList.toggle('active', !!result && chip.dataset.range === result.range);
+    });
+    if(result){
+      ageOut.textContent = result.weight.toFixed(1);
+      useAgeWeightBtn.disabled = false;
+    } else {
+      ageOut.textContent = '—';
+      useAgeWeightBtn.disabled = true;
+    }
+  }
+
+  ageInput.addEventListener('input', updateAgeEstimate);
+
+  useAgeWeightBtn.addEventListener('click', ()=>{
+    const result = estimateWeightFromAge();
+    if(result){
+      input.value = result.weight.toFixed(1);
+      updateDoses();
+      input.focus();
+    }
+  });
+
+  const searchInput = document.getElementById('drugSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  const noResults = document.getElementById('noResults');
+  const searchCount = document.getElementById('searchCount');
+  const totalCards = document.querySelectorAll('.med-card').length;
+
+  function filterMeds(){
+    const q = searchInput.value.trim().toLowerCase();
+    clearBtn.classList.toggle('show', q.length > 0);
+    let visibleCount = 0;
+    document.querySelectorAll('.section').forEach(section=>{
+      let sectionVisible = 0;
+      section.querySelectorAll('.med-card').forEach(card=>{
+        const match = !q || card.textContent.toLowerCase().includes(q);
+        card.style.display = match ? '' : 'none';
+        if(match) sectionVisible++;
+      });
+      section.style.display = sectionVisible ? '' : 'none';
+      visibleCount += sectionVisible;
+    });
+    noResults.style.display = (q && visibleCount === 0) ? 'block' : 'none';
+    searchCount.textContent = q ? (visibleCount + ' / ' + totalCards) : '';
+  }
+  searchInput.addEventListener('input', filterMeds);
+  clearBtn.addEventListener('click', ()=>{
+    searchInput.value = '';
+    filterMeds();
+    searchInput.focus();
+  });
+</script>
+
+<script>
+  // Registers the offline app-shell cache. Safe to no-op if unsupported.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>
