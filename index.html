@@ -255,6 +255,24 @@
   }
   .section-head .ar{ font-size:14px; color:var(--ink-soft); }
 
+  /* ---------- ROUTE DIVIDER (Syrup/Suspension vs IV/IM) ---------- */
+  .route-divider{
+    margin-top:44px; display:flex; align-items:center; gap:14px;
+  }
+  .route-divider .line{ flex:1; height:1px; background:var(--line); }
+  .route-divider .tag{
+    display:inline-flex; align-items:center; gap:9px;
+    background:var(--ink); color:var(--paper); border-radius:999px;
+    padding:10px 22px; white-space:nowrap;
+  }
+  .route-divider .tag::before{
+    content:''; width:7px; height:7px; border-radius:50%; background:var(--amber); flex:none;
+  }
+  .route-divider .tag-en{
+    font-family:'Fraunces',serif; font-size:16px; font-weight:600;
+  }
+  .route-divider .tag .ar{ font-size:13px; color:#C9D0C6; }
+
   .med-grid{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
     gap:16px;
@@ -454,6 +472,12 @@
   <div class="no-results" id="noResults">
     <div class="display">No medication matches your search</div>
     <div class="ar">لا يوجد دواء مطابق لبحثك</div>
+  </div>
+
+  <div class="route-divider">
+    <span class="line"></span>
+    <span class="tag"><span class="tag-en">Syrup / Suspension</span><span class="ar">شراب ومعلق</span></span>
+    <span class="line"></span>
   </div>
 
   <!-- PENICILLINS -->
@@ -836,12 +860,14 @@
     </div>
   </section>
 
+  <div class="route-divider">
+    <span class="line"></span>
+    <span class="tag"><span class="tag-en">Injectable — IV/IM</span><span class="ar">حقن وريدي وعضلي</span></span>
+    <span class="line"></span>
+  </div>
+
   <!-- INJECTABLE (IV / IM) -->
   <section class="section" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
-    <div class="section-head">
-      <h2>Injectable — IV / IM</h2>
-      <span class="ar">الحقن الوريدي والعضلي</span>
-    </div>
     <div class="warn ar" style="margin-bottom:16px; width:100%; box-sizing:border-box; font-size:13px; line-height:1.6; padding:9px 12px;">⚠ ملاحظة: لم تتم إضافة حاسبة الجرعات التلقائية للحقن — التراكيز أدناه معروضة للتوضيح فقط (ملغ/مل بعد التحضير/التخفيف)، ويجب حساب جرعة كل طفل يدويًا بناءً على الجرعة الموصوفة فعليًا (ملغ/كغ) ومطابقة حجم المذيب المذكور بالضبط.</div>
     <div class="med-grid">
 
@@ -940,6 +966,29 @@
           <div class="route-row"><span class="route-badge im">IM</span><span>in 3 mL Lidocaine 1% or N.S</span></div>
         </div>
         <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Inject over 3–5 min; Infuse over 20–60 min</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Ceftazidime</div></div>
+          <span class="chip">Vial</span>
+        </div>
+        <div class="dose-line"><b>90–150 mg/kg/day</b> divided q8hr</div>
+        <div class="strength-row">
+          <span class="strength-chip">500 mg</span>
+          <span class="strength-chip">1 g</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 500 mg</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>500 mg in 5 mL WFI — IV direct or dilute in 100 mL N.S</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 1.5 mL WFI or Lidocaine 1%</span></div>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Vial: 1 g</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>1 g in 10 mL WFI — IV direct or dilute in 100 mL N.S</span></div>
+          <div class="route-row"><span class="route-badge im">IM</span><span>in 3 mL WFI or Lidocaine 1%</span></div>
+        </div>
+        <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, NaCl-Gluc, Ringer's<br><b>IV:</b> Inject over 3–4 min; Infuse over 20–30 min</div>
       </div>
 
       <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
@@ -1240,6 +1289,15 @@
       });
       section.style.display = sectionVisible ? '' : 'none';
       visibleCount += sectionVisible;
+    });
+    // hide a route divider (Syrup/Suspension, IV/IM) when nothing under it matched
+    document.querySelectorAll('.route-divider').forEach(div=>{
+      let sib = div.nextElementSibling, anyVisible = false;
+      while(sib && !sib.classList.contains('route-divider')){
+        if(sib.classList.contains('section') && sib.style.display !== 'none'){ anyVisible = true; break; }
+        sib = sib.nextElementSibling;
+      }
+      div.style.display = anyVisible ? '' : 'none';
     });
     noResults.style.display = (q && visibleCount === 0) ? 'block' : 'none';
     searchCount.textContent = q ? (visibleCount + ' / ' + totalCards) : '';
