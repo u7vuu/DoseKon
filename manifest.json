@@ -1,6 +1,6 @@
 {
-  "name": "Antibiotic Dosing — المضادات الحيوية للأطفال",
-  "short_name": "Antibiotic Dosing",
+  "name": "DoseSafe - Pediatric Dosing Guide",
+  "short_name": "DoseSafe",
   "description": "Pediatric antibiotic dosing quick-reference and mL calculator — syrup, suspension & injectable.",
   "id": "./index.html",
   "start_url": "./index.html",
