@@ -1,6 +1,6 @@
 {
-  "name": "DoseSafe - Dosing Guide",
-  "short_name": "DoseSafe",
+  "name": "DoseKon - Dosing Guide",
+  "short_name": "DoseKon",
   "description": "Pediatric antibiotic dosing quick-reference and mL calculator — syrup, suspension & injectable.",
   "id": "./index.html",
   "start_url": "./index.html",
