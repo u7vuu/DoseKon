@@ -6,6 +6,15 @@
 <title>DoseKon - Dosing Guide</title>
 <meta name="description" content="Pediatric antibiotic dosing quick-reference and mL calculator — syrup, suspension &amp; injectable.">
 
+<!-- Security hardening: restrict what this page is allowed to load/run.
+     'unsafe-inline' is required for script-src/style-src because this is a
+     single-file app with no build step (no way to generate CSP hashes/nonces).
+     Note: frame-ancestors here is ignored by browsers in a <meta> tag — real
+     clickjacking protection needs the HTTP header from your host (see the
+     included security-headers examples). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
 <!-- PWA: installable app shell, works fully offline once cached -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#17231E">
@@ -1603,6 +1612,26 @@
       navigator.serviceWorker.register('./service-worker.js').catch(() => {});
     });
   }
+</script>
+
+<script>
+  // Light deterrent against casual copying (right-click "Save as", casual
+  // devtools opening). This is NOT real protection: any browser's network
+  // tab, "view-source:", or a simple download of the URL still exposes
+  // this file — the browser has to download it to run it, and no amount
+  // of client-side JS can change that. Genuinely sensitive logic must live
+  // on a server the client only talks to over an API.
+  document.addEventListener('contextmenu', (e) => e.preventDefault());
+  document.addEventListener('keydown', (e) => {
+    const k = e.key;
+    if (
+      k === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(k.toUpperCase())) ||
+      (e.ctrlKey && k.toUpperCase() === 'U')
+    ) {
+      e.preventDefault();
+    }
+  });
 </script>
 
 </body>

@@ -1,9 +1,15 @@
-// Antibiotic Dosing — offline app-shell cache.
+// DoseKon — offline app-shell cache.
 // Bump this version any time index.html (or any shipped file) changes,
 // so returning users pick up the update instead of a stale cache.
-const VERSION = 'v1';
-const SHELL_CACHE = `antibiotic-dosing-shell-${VERSION}`;
-const FONT_CACHE = 'antibiotic-dosing-fonts';
+const VERSION = 'v2';
+const SHELL_CACHE = `dosekon-shell-${VERSION}`;
+const FONT_CACHE = 'dosekon-fonts';
+
+// Canonical key for the app shell page. No matter what exact URL a
+// navigation request carries (trailing slash, ?query added by the OS
+// when launched from the home screen, etc), offline navigations
+// always fall back to this one cached copy.
+const SHELL_URL = './index.html';
 
 const APP_SHELL = [
   './',
@@ -18,9 +24,21 @@ const APP_SHELL = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
+    caches.open(SHELL_CACHE).then((cache) =>
+      Promise.all(
+        APP_SHELL.map((url) =>
+          // cache: 'reload' bypasses the HTTP disk cache so we always
+          // grab a genuinely fresh copy while installing.
+          fetch(url, { cache: 'reload' })
+            .then((response) => {
+              if (response && response.ok) return cache.put(url, response);
+            })
+            // A single missing/failed asset (e.g. one icon) must never
+            // abort caching of the rest of the app shell.
+            .catch(() => {})
+        )
+      )
+    ).then(() => self.skipWaiting())
   );
 });
 
@@ -50,9 +68,7 @@ self.addEventListener('fetch', (event) => {
           if (cached) return cached;
           return fetch(request)
             .then((response) => {
-              if (response && response.status === 200) {
-                cache.put(request, response.clone());
-              }
+              if (response && response.status === 200) cache.put(request, response.clone());
               return response;
             })
             .catch(() => cached);
@@ -62,8 +78,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // App shell (same-origin): cache-first for instant, offline-safe loads;
-  // refresh the cache in the background whenever the network is available.
+  // Page navigations (address bar, refresh, reopening from the home
+  // screen icon): network-first for freshness, but ALWAYS resolve to
+  // the cached app shell when offline — regardless of the exact URL
+  // requested. This is the actual fix for "refresh asks for internet".
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response && response.ok) {
+            caches.open(SHELL_CACHE).then((cache) => cache.put(SHELL_URL, response.clone()));
+          }
+          return response;
+        })
+        .catch(() =>
+          caches.match(SHELL_URL).then((cached) => cached || caches.match(request))
+        )
+    );
+    return;
+  }
+
+  // Everything else in the app shell (same-origin CSS/JS/images):
+  // cache-first for instant, offline-safe loads; refresh the cache in
+  // the background whenever the network is available.
   event.respondWith(
     caches.match(request).then((cached) => {
       const network = fetch(request)
