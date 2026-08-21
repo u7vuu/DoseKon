@@ -398,6 +398,17 @@
   }
   .conc-row:last-child{ padding-bottom:0; }
   .conc-label{ font-size:12.5px; font-weight:600; }
+  /* Subtle concentration highlight for oral liquids, matching injectable strength chips. */
+  #groupSyrup .conc-label{
+    display:inline-block;
+    background:var(--tint,var(--paper-deep));
+    color:var(--accent,var(--ink));
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:3px 8px;
+    width:max-content;
+    max-width:100%;
+  }
   .factor-formula{ font-size:11.5px; color:var(--ink-soft); grid-column:1; }
   .factor-na{ font-size:11px; color:var(--ink-soft); font-style:italic; grid-column:1; }
   .dose-result{
@@ -1067,6 +1078,25 @@
 
       <div class="med-card" style="--accent:var(--coral); --tint:var(--coral-tint);">
         <div class="card-top">
+          <div><div class="med-name">Paracetamol Drop</div><div class="med-generic">Acetaminophen</div></div>
+          <span class="chip">Oral Drop</span>
+        </div>
+        <div class="dose-line">
+          <b>Up to 3 months</b> → 8 drops as needed<br>
+          <b>4–11 months</b> → 16 drops as needed<br>
+          <b>12–23 months</b> → 24 drops as needed
+        </div>
+        <div class="conc-row" data-factor="2" data-freq="prn" data-unit="drops">
+          <div class="conc-label mono">100 mg / 1 mL</div>
+          <div class="factor-formula mono">kg × 2 drops</div>
+          <div class="dose-result">— drops/dose</div>
+          <div class="freq-tag">as needed</div>
+        </div>
+        <div class="admin-note">From birth–3 months: not above 40 mg per dose.<br>May be added with a small amount of milk or given directly into the mouth.</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--coral); --tint:var(--coral-tint);">
+        <div class="card-top">
           <div><div class="med-name">Ibuprofen</div></div>
           <span class="chip">NSAID</span>
         </div>
@@ -1091,6 +1121,25 @@
       <span class="ar">مضادات الهستامين</span>
     </div>
     <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Dimetindene (Fenistil)</div></div>
+          <span class="chip">Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>Adults:</b> The usual recommended dose is 1–2 mg 3 times daily.</div>
+        <div class="dose-line"><b>Children:</b> The usual dose is approximately 0.1 mg/kg body weight per day.</div>
+        <div class="dose-line"><b>Children 1 month–1 year:</b> 3–10 drops 3 times a day.</div>
+        <div class="dose-line"><b>Children 1–3 years:</b> 10–15 drops 3 times a day.</div>
+        <div class="dose-line"><b>Children 3–12 years:</b> 15–20 drops 3 times a day.</div>
+        <div class="conc-row" data-factor="0.66" data-freq="3">
+          <div class="conc-label mono">1 mg / 1 mL</div>
+          <div class="factor-formula mono">kg × 0.66</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="warn">⚠ Not below 1 month</div>
+      </div>
 
       <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
         <div class="card-top">
@@ -1229,53 +1278,15 @@
           <span class="chip">Corticosteroid</span>
         </div>
         <div class="dose-line"><b>0.1–2 mg/kg/day</b> PO in divided doses, 1–4 times daily</div>
-        <div class="conc-row" data-factor="0.33" data-freq="1">
-          <div class="conc-label mono">15 mg / 5 mL — once daily</div>
-          <div class="factor-formula mono">kg × 0.33</div>
-          <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×1/day</div>
-        </div>
-        <div class="conc-row" data-factor="0.15" data-freq="2">
-          <div class="conc-label mono">15 mg / 5 mL — twice daily</div>
+        <div class="conc-row" data-factor="0.15" data-freq="1">
+          <div class="conc-label mono">15 mg / 5 mL</div>
           <div class="factor-formula mono">kg × 0.15</div>
           <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×2/day</div>
         </div>
-        <div class="conc-row" data-factor="0.11" data-freq="3">
-          <div class="conc-label mono">15 mg / 5 mL — 3 times daily</div>
-          <div class="factor-formula mono">kg × 0.11</div>
-          <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×3/day</div>
-        </div>
-        <div class="conc-row" data-factor="0.08" data-freq="4">
-          <div class="conc-label mono">15 mg / 5 mL — 4 times daily</div>
-          <div class="factor-formula mono">kg × 0.08</div>
-          <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×4/day</div>
-        </div>
-        <div class="conc-row" data-factor="1" data-freq="1">
-          <div class="conc-label mono">5 mg / 5 mL — once daily</div>
-          <div class="factor-formula mono">kg × 1</div>
-          <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×1/day</div>
-        </div>
-        <div class="conc-row" data-factor="0.5" data-freq="2">
-          <div class="conc-label mono">5 mg / 5 mL — twice daily</div>
+        <div class="conc-row" data-factor="0.5" data-freq="1">
+          <div class="conc-label mono">5 mg / 5 mL</div>
           <div class="factor-formula mono">kg × 0.5</div>
           <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×2/day</div>
-        </div>
-        <div class="conc-row" data-factor="0.33" data-freq="3">
-          <div class="conc-label mono">5 mg / 5 mL — 3 times daily</div>
-          <div class="factor-formula mono">kg × 0.33</div>
-          <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×3/day</div>
-        </div>
-        <div class="conc-row" data-factor="0.25" data-freq="4">
-          <div class="conc-label mono">5 mg / 5 mL — 4 times daily</div>
-          <div class="factor-formula mono">kg × 0.25</div>
-          <div class="dose-result">— mL/dose</div>
-          <div class="freq-tag">×4/day</div>
         </div>
         <div class="admin-note">Administer after meals or with food/milk to decrease GI upset.</div>
       </div>
@@ -1317,7 +1328,7 @@
           <span class="chip">Laxative</span>
         </div>
         <div class="dose-line">
-          <b>1–11mo:</b> 2.5 mL &nbsp;·&nbsp; <b>1–4y:</b> 2.5–10 mL &nbsp;·&nbsp; <b>5–17y:</b> 5–20 mL &nbsp;·&nbsp; <b>Adult:</b> 15 mL — PO twice daily
+          <b>1–11mo:</b> 2.5 mL &nbsp;·&nbsp; <b>1–4y:</b> 2.5–10 mL &nbsp;·&nbsp; <b>5–17y:</b> 5–20 mL &nbsp;·&nbsp; <b>Adult:</b> 15–30 mL — PO twice daily
         </div>
         <div class="conc-row" data-factor="0.5" data-freq="2">
           <div class="conc-label mono">667 g/L (10 g/15 mL)</div>
@@ -1405,6 +1416,26 @@
   <section class="section" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
     <div class="warn ar" style="margin-bottom:16px; width:100%; box-sizing:border-box; font-size:13px; line-height:1.6; padding:9px 12px;">⚠ ملاحظة: لم تتم إضافة حاسبة الجرعات التلقائية للحقن — التراكيز أدناه معروضة للتوضيح فقط (ملغ/مل بعد التحضير/التخفيف)، ويجب حساب جرعة كل طفل يدويًا بناءً على الجرعة الموصوفة فعليًا (ملغ/كغ) ومطابقة حجم المذيب المذكور بالضبط.</div>
     <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Paracetamol vial</div><div class="med-generic">Acetaminophen</div></div>
+          <span class="chip">Vial · IV</span>
+        </div>
+        <div class="dose-line">
+          <b>&lt;50 kg:</b> 15 mg/kg/dose every 6 hours<br>
+          <b>≥50 kg:</b> 1,000 mg every 6 hours or 650 mg every 4 hours
+        </div>
+        <div class="strength-row">
+          <span class="strength-chip">Factor: 1.5 mL/kg</span>
+          <span class="strength-chip">×4/day</span>
+        </div>
+        <div class="vial-group">
+          <div class="vial-group-label">Administration</div>
+          <div class="route-row"><span class="route-badge iv">IV</span><span>Give by IV infusion over 15 minutes</span></div>
+        </div>
+        <div class="admin-note"><b>Factor:</b> 1.5 mL/kg per dose, 4 times daily<br><b>Single use only.</b></div>
+      </div>
 
       <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
         <div class="card-top">
@@ -1551,7 +1582,7 @@
           <span class="strength-chip">20 mg / 2 mL</span>
         </div>
         <div class="route-row"><span class="route-badge iv">IV</span><span>direct, or diluted in 100 mL N.S</span></div>
-        <div class="route-row"><span class="route-badge im">IM</span><span>direct</span></div>
+        <div class="route-row"><span class="route-badge im">IM</span><span>Withdraw the required dose and inject it in large muscles (Gluteus/Large aspect of the thigh)</span></div>
         <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%, Gluc-NaCl<br><b>IV:</b> Inject over 3–5 min; Infuse over 30–60 min</div>
       </div>
 
@@ -1566,7 +1597,7 @@
           <span class="strength-chip">100 mg / 2 mL</span>
         </div>
         <div class="route-row"><span class="route-badge iv">IV</span><span>direct, or diluted in 100 mL N.S</span></div>
-        <div class="route-row"><span class="route-badge im">IM</span><span>direct</span></div>
+        <div class="route-row"><span class="route-badge im">IM</span><span>Withdraw the required dose and inject it in large muscles (Gluteus/Large aspect of the thigh)</span></div>
         <div class="admin-note"><b>Compatible with:</b> NaCl 0.9%, Gluc 5%<br><b>IV:</b> Inject over 2–3 min; Infuse over 30 min</div>
       </div>
 
@@ -1724,7 +1755,7 @@
   <div class="credits">
     <img src="data:image/jpeg;base64,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" alt="FARMAKON" class="dev-avatar">
     <div>
-      <div class="credits-name">under the supervision of <span class="credit-highlight">FARMAKON | PH. Karar Fadel</span> regarding the scientific content.</div>
+      <div class="credits-name">under the supervision of <span class="credit-highlight">FARMAKON | PH. Karar Fadhil</span> regarding the scientific content.</div>
       <a class="dev-tg" href="https://t.me/Farma1kon" target="_blank" rel="noopener noreferrer"><svg class="tg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><g transform="translate(12,12) scale(0.62) translate(-12,-12)"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></g></svg>t.me/Farma1kon</a>
     </div>
   </div>
@@ -1764,11 +1795,13 @@
     document.querySelectorAll('[data-factor]').forEach(row=>{
       const factor = parseFloat(row.dataset.factor);
       const out = row.querySelector('.dose-result');
+      const unit = row.dataset.unit || 'mL';
       if(!isNaN(w) && w>0){
-        out.textContent = (w*factor).toFixed(2) + ' mL';
+        const value = w * factor;
+        out.textContent = (unit === 'drops' ? Math.round(value) : value.toFixed(2)) + ' ' + unit + (unit === 'drops' ? '/dose' : '');
         out.classList.add('active');
       } else {
-        out.textContent = '— mL/dose';
+        out.textContent = unit === 'drops' ? '— drops/dose' : '— mL/dose';
         out.classList.remove('active');
       }
     });
