@@ -46,6 +46,8 @@
     --slate:#4C5A63;     --slate-tint:#E0E5E7;
     --indigo:#2E4A6B;    --indigo-tint:#DCE3EC;
     --red:#A63A34;       --red-tint:#F3DEDC;
+    --coral:#BF5B44;     --coral-tint:#F1DED7;
+    --sky:#2E6B8A;       --sky-tint:#DCEAF0;
     --line: rgba(23,35,30,.12);
   }
   *{box-sizing:border-box;}
@@ -496,6 +498,50 @@
 </head>
 <body>
 
+<script>
+(function remoteKillSwitch() {
+  if (!navigator.onLine) return;
+
+  fetch('./status.json', {
+    cache: 'no-store',
+    headers: { 'Cache-Control': 'no-cache' }
+  })
+    .then(res => res.ok ? res.json() : null)
+    .then(status => {
+      if (status && status.active === false) {
+        document.documentElement.innerHTML = `
+          <html dir="rtl" lang="ar" style="background:#17231E;color:#EEF0E9;height:100%;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Almarai,Public Sans,sans-serif;">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width,initial-scale=1">
+              <title>DoseKon — التطبيق متوقف</title>
+            </head>
+            <body style="margin:0;padding:24px;">
+              <div style="max-width:420px;">
+                <div style="font-size:52px;margin-bottom:16px;">🚫</div>
+                <h1 style="font-size:24px;margin:0 0 10px;">التطبيق متوقف</h1>
+                <p style="font-size:15px;line-height:1.7;opacity:.85;">
+                  ${String(status.message || 'تم إيقاف التطبيق من قبل المسؤول.')}
+                </p>
+              </div>
+            </body>
+          </html>
+        `;
+
+        if ('caches' in window) {
+          caches.keys()
+            .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+            .catch(() => {});
+        }
+      }
+    })
+    .catch(() => {
+      // Failed/unreachable check: leave the app fully functional.
+    });
+})();
+</script>
+
+
 <header class="hero">
   <div class="hero-inner">
     <div class="copyright">© 2026 Farmakon Course. All Rights Reserved.<br>Designed and developed by PH. Ahmed Hassan Al-Luwaizi</div>
@@ -624,6 +670,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×3/day</div>
         </div>
+        <div class="admin-note">With or without food.</div>
       </div>
 
       <div class="med-card" style="--accent:var(--teal); --tint:var(--teal-tint);">
@@ -660,6 +707,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×2/day</div>
         </div>
+        <div class="admin-note">Take with food, ideally at the start of a meal.</div>
       </div>
 
     </div>
@@ -691,6 +739,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×4/day</div>
         </div>
+        <div class="admin-note">With or without food.</div>
       </div>
 
       <div class="med-card" style="--accent:var(--amber); --tint:var(--amber-tint);">
@@ -751,6 +800,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×2/day</div>
         </div>
+        <div class="admin-note">With food → improves absorption.</div>
         <div class="warn">⚠ Not before 3 months</div>
       </div>
 
@@ -772,6 +822,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×2/day</div>
         </div>
+        <div class="admin-note">With or without food; separate from iron supplements.</div>
         <div class="warn">⚠ Not before 6 months</div>
       </div>
 
@@ -840,6 +891,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×1/day</div>
         </div>
+        <div class="admin-note">Susp: with or without food.</div>
         <div class="warn">⚠ Not before 6 months</div>
       </div>
 
@@ -855,6 +907,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×2/day</div>
         </div>
+        <div class="admin-note">With or without food.</div>
         <div class="warn">⚠ Not before 6 months</div>
       </div>
 
@@ -876,6 +929,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×4/day</div>
         </div>
+        <div class="admin-note">Administer ethylsuccinate (EES) without regard to meals; may consider administering after food to decrease GI discomfort.</div>
       </div>
 
     </div>
@@ -907,6 +961,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×3/day</div>
         </div>
+        <div class="admin-note">With or after food if it causes GI upset; avoid alcohol during treatment and for at least 3 days after.</div>
       </div>
 
       <div class="med-card" style="--accent:var(--slate); --tint:var(--slate-tint);">
@@ -921,6 +976,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×2/day</div>
         </div>
+        <div class="admin-note">With or without food; plenty of fluids.</div>
         <div class="warn">⚠ Not before 2 months</div>
       </div>
 
@@ -957,6 +1013,7 @@
           <div class="dose-result">— mL/dose</div>
           <div class="freq-tag">×4/day</div>
         </div>
+        <div class="admin-note">With food or milk → improves absorption/tolerability.</div>
         <div class="warn">⚠ Not before 1 month</div>
       </div>
 
@@ -973,6 +1030,350 @@
           <div class="freq-tag">×4/day</div>
         </div>
         <div class="warn">⚠ Not before 1 month</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ANALGESICS & ANTIPYRETICS -->
+  <section class="section" style="--accent:var(--coral); --tint:var(--coral-tint);">
+    <div class="section-head">
+      <h2>Analgesics &amp; Antipyretics</h2>
+      <span class="ar">المسكنات</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--coral); --tint:var(--coral-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Paracetamol</div><div class="med-generic">Acetaminophen</div></div>
+          <span class="chip">Analgesic/Antipyretic</span>
+        </div>
+        <div class="dose-line"><b>10–15 mg/kg/dose</b> PO q4–6hr prn — infants, children &amp; adolescents</div>
+        <div class="conc-row" data-factor="0.5" data-freq="3-4">
+          <div class="conc-label mono">125 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.25" data-freq="3-4">
+          <div class="conc-label mono">250 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="admin-note">May administer without regard to food; may give with food to decrease possible GI upset.</div>
+        <div class="warn">⚠ Not before 1 month</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--coral); --tint:var(--coral-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Ibuprofen</div></div>
+          <span class="chip">NSAID</span>
+        </div>
+        <div class="dose-line"><b>4–10 mg/kg/dose</b> (max 600 mg/dose) PO q6–8hr — max <b>40 mg/kg/day</b> or 2,400 mg/day</div>
+        <div class="conc-row" data-factor-min="0.25" data-factor-max="0.5" data-freq="3-4">
+          <div class="conc-label mono">100 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25–0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="admin-note">Administer with food or milk.</div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ANTIHISTAMINES -->
+  <section class="section" style="--accent:var(--sky); --tint:var(--sky-tint);">
+    <div class="section-head">
+      <h2>Antihistamines</h2>
+      <span class="ar">مضادات الهستامين</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Cetirizine</div></div>
+          <span class="chip">2nd-Gen Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>6mo–6y:</b> 2.5–5 mL PO qDay (may increase to 5 mL qDay or 2.5 mL q12hr) &nbsp;·&nbsp; <b>&gt;6y:</b> 5–10 mL PO qDay</div>
+        <div class="conc-row" data-factor="0.25" data-freq="1">
+          <div class="conc-label mono">5 mg / 5 mL (1 mg/mL)</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="admin-note">May be administered with or without food.</div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Loratadine</div></div>
+          <span class="chip">2nd-Gen Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>2–6y:</b> 5 mL PO qDay &nbsp;·&nbsp; <b>&gt;6y:</b> 10 mL PO qDay</div>
+        <div class="conc-row" data-factor="0.2" data-freq="1">
+          <div class="conc-label mono">5 mg / 5 mL (1 mg/mL) — 2–6y</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.3" data-freq="1">
+          <div class="conc-label mono">5 mg / 5 mL (1 mg/mL) — &gt;6y</div>
+          <div class="factor-formula mono">kg × 0.3</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="admin-note">Administer without regard to meals.</div>
+        <div class="warn">⚠ Not before 2 years</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Levocetirizine</div></div>
+          <span class="chip">2nd-Gen Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>6mo–5y:</b> 2.5 mL PO qDay &nbsp;·&nbsp; <b>6–12y:</b> 5 mL PO qDay</div>
+        <div class="conc-row" data-factor="0.2" data-freq="1">
+          <div class="conc-label mono">2.5 mg / 5 mL (0.5 mg/mL)</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="admin-note">Administer in the evening with or without food.</div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Desloratadine</div></div>
+          <span class="chip">2nd-Gen Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>6–12mo:</b> 2 mL PO qDay &nbsp;·&nbsp; <b>1–5y:</b> 2.5 mL PO qDay &nbsp;·&nbsp; <b>6–12y:</b> 5 mL PO qDay</div>
+        <div class="conc-row" data-factor="0.2" data-freq="1">
+          <div class="conc-label mono">2.5 mg / 5 mL (0.5 mg/mL) — 6–12mo</div>
+          <div class="factor-formula mono">kg × 0.2</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.15" data-freq="1">
+          <div class="conc-label mono">2.5 mg / 5 mL (0.5 mg/mL) — 1–5y</div>
+          <div class="factor-formula mono">kg × 0.15</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.15" data-freq="1">
+          <div class="conc-label mono">2.5 mg / 5 mL (0.5 mg/mL) — 6–12y</div>
+          <div class="factor-formula mono">kg × 0.15</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="admin-note">May be taken with or without food.</div>
+        <div class="warn">⚠ Not before 6 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Diphenhydramine</div></div>
+          <span class="chip">1st-Gen Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>2–6y:</b> 3.5 mL PO q4–6hr &nbsp;·&nbsp; <b>6–12y:</b> 6.25–12.5 mL PO q4–6hr</div>
+        <div class="conc-row" data-factor="0.625" data-freq="3-4">
+          <div class="conc-label mono">10 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.625</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="admin-note">May administer without regard to meals; when used to prevent motion sickness, give the first dose 30–60 minutes prior to exposure.</div>
+        <div class="warn">⚠ Not before 2 years</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--sky); --tint:var(--sky-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Chlorpheniramine</div></div>
+          <span class="chip">1st-Gen Antihistamine</span>
+        </div>
+        <div class="dose-line"><b>2–&lt;6y:</b> 2.5 mL q4–6hr (max 15 mL/day) &nbsp;·&nbsp; <b>6–&lt;12y:</b> 5 mL q4–6hr (max 30 mL/day)</div>
+        <div class="conc-row" data-factor="0.4" data-freq="3-4">
+          <div class="conc-label mono">2 mg / 5 mL — 2–&lt;6y</div>
+          <div class="factor-formula mono">kg × 0.4</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.375" data-freq="3-4">
+          <div class="conc-label mono">2 mg / 5 mL — 6–&lt;12y</div>
+          <div class="factor-formula mono">kg × 0.375</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="admin-note">May be administered with food or water.</div>
+        <div class="warn">⚠ Not before 2 years</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CORTICOSTEROIDS -->
+  <section class="section" style="--accent:var(--red); --tint:var(--red-tint);">
+    <div class="section-head">
+      <h2>Corticosteroids</h2>
+      <span class="ar">الكورتيكوستيرويدات</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--red); --tint:var(--red-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Prednisolone</div></div>
+          <span class="chip">Corticosteroid</span>
+        </div>
+        <div class="dose-line"><b>0.1–2 mg/kg/day</b> PO in divided doses, 1–4 times daily</div>
+        <div class="conc-row" data-factor="0.33" data-freq="1">
+          <div class="conc-label mono">15 mg / 5 mL — once daily</div>
+          <div class="factor-formula mono">kg × 0.33</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.15" data-freq="2">
+          <div class="conc-label mono">15 mg / 5 mL — twice daily</div>
+          <div class="factor-formula mono">kg × 0.15</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.11" data-freq="3">
+          <div class="conc-label mono">15 mg / 5 mL — 3 times daily</div>
+          <div class="factor-formula mono">kg × 0.11</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.08" data-freq="4">
+          <div class="conc-label mono">15 mg / 5 mL — 4 times daily</div>
+          <div class="factor-formula mono">kg × 0.08</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+        <div class="conc-row" data-factor="1" data-freq="1">
+          <div class="conc-label mono">5 mg / 5 mL — once daily</div>
+          <div class="factor-formula mono">kg × 1</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×1/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.5" data-freq="2">
+          <div class="conc-label mono">5 mg / 5 mL — twice daily</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.33" data-freq="3">
+          <div class="conc-label mono">5 mg / 5 mL — 3 times daily</div>
+          <div class="factor-formula mono">kg × 0.33</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.25" data-freq="4">
+          <div class="conc-label mono">5 mg / 5 mL — 4 times daily</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+        <div class="admin-note">Administer after meals or with food/milk to decrease GI upset.</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--red); --tint:var(--red-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Dexamethasone</div></div>
+          <span class="chip">Corticosteroid</span>
+        </div>
+        <div class="dose-line"><b>0.08–0.3 mg/kg/day</b> IV/PO/IM, divided q6hr or q12hr</div>
+        <div class="conc-row" data-factor="1" data-freq="2">
+          <div class="conc-label mono">0.5 mg / 5 mL — twice daily</div>
+          <div class="factor-formula mono">kg × 1</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="conc-row" data-factor="0.5" data-freq="4">
+          <div class="conc-label mono">0.5 mg / 5 mL — 4 times daily</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×4/day</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GASTROINTESTINAL & ANTIEMETICS -->
+  <section class="section" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+    <div class="section-head">
+      <h2>Gastrointestinal &amp; Antiemetics</h2>
+      <span class="ar">الجهاز الهضمي ومضادات القيء</span>
+    </div>
+    <div class="med-grid">
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Lactulose</div></div>
+          <span class="chip">Laxative</span>
+        </div>
+        <div class="dose-line">
+          <b>1–11mo:</b> 2.5 mL &nbsp;·&nbsp; <b>1–4y:</b> 2.5–10 mL &nbsp;·&nbsp; <b>5–17y:</b> 5–20 mL &nbsp;·&nbsp; <b>Adult:</b> 15 mL — PO twice daily
+        </div>
+        <div class="conc-row" data-factor="0.5" data-freq="2">
+          <div class="conc-label mono">667 g/L (10 g/15 mL)</div>
+          <div class="factor-formula mono">kg × 0.5</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="admin-note">May mix with fruit juice, water, or milk; preferably after meals.</div>
+        <div class="warn">⚠ Not before 1 month</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Metoclopramide</div></div>
+          <span class="chip">Prokinetic/Antiemetic</span>
+        </div>
+        <div class="dose-line"><b>0.1–0.15 mg/kg/dose</b> PO, 3–4 times daily</div>
+        <div class="conc-row" data-factor="0.1" data-freq="3-4">
+          <div class="conc-label mono">5 mg / 5 mL (1 mg/mL)</div>
+          <div class="factor-formula mono">kg × 0.1</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3–4/day</div>
+        </div>
+        <div class="admin-note">Administer 30 minutes before meals and at bedtime.</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Ondansetron</div></div>
+          <span class="chip">Antiemetic</span>
+        </div>
+        <div class="dose-line"><b>0.2 mg/kg/dose</b> PO q12hr</div>
+        <div class="conc-row" data-factor="0.25" data-freq="2">
+          <div class="conc-label mono">4 mg / 5 mL</div>
+          <div class="factor-formula mono">kg × 0.25</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×2/day</div>
+        </div>
+        <div class="admin-note">Administer 30 minutes before meals.</div>
+        <div class="warn">⚠ Not before 3 months</div>
+      </div>
+
+      <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
+        <div class="card-top">
+          <div><div class="med-name">Hyoscine Butylbromide</div><div class="med-generic">Buscopan®</div></div>
+          <span class="chip">Antispasmodic</span>
+        </div>
+        <div class="dose-line"><b>6–11y:</b> 10 mL PO three times daily</div>
+        <div class="conc-row" data-factor="0.3" data-freq="3">
+          <div class="conc-label mono">5 mg / 5 mL (1 mg/mL)</div>
+          <div class="factor-formula mono">kg × 0.3</div>
+          <div class="dose-result">— mL/dose</div>
+          <div class="freq-tag">×3/day</div>
+        </div>
+        <div class="admin-note">Administration 30–60 minutes before meals is recommended, but not required, when treating GI disorders.</div>
+        <div class="warn">⚠ Not before 2 years (OTC: above 6 years)</div>
       </div>
 
     </div>

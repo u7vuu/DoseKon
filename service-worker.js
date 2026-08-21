@@ -1,7 +1,7 @@
 // DoseKon — offline app-shell cache.
 // Bump this version any time index.html (or any shipped file) changes,
 // so returning users pick up the update instead of a stale cache.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `dosekon-shell-${VERSION}`;
 const FONT_CACHE = 'dosekon-fonts';
 
@@ -73,6 +73,16 @@ self.addEventListener('fetch', (event) => {
             })
             .catch(() => cached);
         })
+      )
+    );
+    return;
+  }
+
+  // Remote kill-switch status: never serve or store a cached copy.
+  if (url.pathname.endsWith('/status.json')) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' }).catch(() =>
+        new Response('', { status: 503, statusText: 'Offline' })
       )
     );
     return;
