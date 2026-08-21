@@ -489,6 +489,20 @@
     color:var(--ink-soft); text-align:center;
   }
 
+
+  /* Mobile display fix: use the full available width and prevent concentration/result overlap. */
+  @media (max-width:600px){
+    main{ padding-left:12px; padding-right:12px; }
+    .med-card{ padding-left:12px; padding-right:12px; }
+    .conc-row{ grid-template-columns:minmax(0,1fr) 88px; gap:2px 8px; }
+    .conc-label, #groupSyrup .conc-label{
+      min-width:0; width:auto; max-width:100%;
+      overflow-wrap:anywhere; word-break:break-word;
+    }
+    .dose-result{ min-width:82px; padding:4px 6px; }
+    .freq-tag{ min-width:0; }
+  }
+
   @media print{
     .search-bar{ display:none !important; }
     .local-search{ display:none !important; }
@@ -629,7 +643,7 @@
 <div class="route-group" id="groupSyrup">
 <div class="route-divider" id="routeSyrup">
 <span class="line"></span>
-<span class="tag"><span class="tag-en">Syrup / Suspension / Oral Drops</span><span class="ar">شراب / معلق / قطرات فموية</span></span>
+<span class="tag"><span class="tag-en">Syrup / Suspension / Oral Drops</span></span>
 <span class="line"></span>
 </div>
 <div class="equation">
@@ -1380,14 +1394,13 @@
 <b>≥50 kg:</b> 1,000 mg every 6 hours or 650 mg every 4 hours
         </div>
 <div class="strength-row">
-<span class="strength-chip">Factor: 1.5 mL/kg</span>
 <span class="strength-chip">×4/day</span>
 </div>
 <div class="vial-group">
 <div class="vial-group-label">Administration</div>
 <div class="route-row"><span class="route-badge iv">IV</span><span>Give by IV infusion over 15 minutes</span></div>
 </div>
-<div class="admin-note"><b>Factor:</b> 1.5 mL/kg per dose, 4 times daily<br/><b>Single use only.</b></div>
+<div class="admin-note"><b>Single use only.</b></div>
 </div>
 <div class="med-card" style="--accent:var(--indigo); --tint:var(--indigo-tint);">
 <div class="card-top">
