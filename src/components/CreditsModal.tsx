@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import avatarAhmed from '../assets/team/avatar-ahmed.jpg';
+import avatarFarmakon from '../assets/team/avatar-farmakon.jpg';
 import { Send, Instagram, X, Users } from 'lucide-react';
 
 interface CreditsModalProps {
@@ -75,9 +77,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ isOpen, onClose }) =
         <div className="space-y-3.5">
           {/* Developer Credit Card */}
           <div className="flex items-center gap-3.5 bg-[var(--paper-deep)]/50 p-3.5 rounded-xl border border-[var(--line)] shadow-xs">
-            <div className="w-10 h-10 rounded-full bg-[var(--amber)]/20 border-2 border-[var(--amber)] flex items-center justify-center font-bold text-sm text-[var(--ink)] flex-shrink-0">
-              AL
-            </div>
+            <img src={avatarAhmed} alt="Ahmed Hassan Al-Luwaizi" className="w-10 h-10 rounded-full border-2 border-[var(--amber)] object-cover flex-shrink-0" />
             <div className="min-w-0 flex-1">
               <div className="font-medium text-xs text-[var(--ink-soft)]">
                 Designed &amp; developed by
@@ -110,9 +110,7 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ isOpen, onClose }) =
 
           {/* Scientific Supervisor Credit Card */}
           <div className="flex items-center gap-3.5 bg-[var(--paper-deep)]/50 p-3.5 rounded-xl border border-[var(--line)] shadow-xs">
-            <div className="w-10 h-10 rounded-full bg-[var(--teal)]/20 border-2 border-[var(--teal)] flex items-center justify-center font-bold text-sm text-[var(--ink)] flex-shrink-0">
-              FK
-            </div>
+            <img src={avatarFarmakon} alt="FARMAKON" className="w-10 h-10 rounded-full border-2 border-[var(--teal)] object-cover flex-shrink-0" />
             <div className="min-w-0 flex-1">
               <div className="font-medium text-xs text-[var(--ink-soft)]">
                 Scientific content supervised by
@@ -129,6 +127,15 @@ export const CreditsModal: React.FC<CreditsModalProps> = ({ isOpen, onClose }) =
                 >
                   <Send className="w-3 h-3" />
                   <span>t.me/Farma1kon</span>
+                </a>
+                <a
+                  href="https://ig.me/u/farrmakon"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[var(--coral)] hover:underline font-semibold text-xs"
+                >
+                  <Instagram className="w-3 h-3" />
+                  <span>ig.me/u/farrmakon</span>
                 </a>
               </div>
             </div>
