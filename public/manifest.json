@@ -1,0 +1,25 @@
+{
+  "name": "DoseKon",
+  "short_name": "DoseKon",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#14221C",
+  "background_color": "#F2F4EE",
+  "description": "Bilingual (Arabic/English) pediatric antibiotic & OTC drug-dosing quick-reference and weight-based mL calculator.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

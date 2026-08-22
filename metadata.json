@@ -1,0 +1,6 @@
+{
+  "name": "DoseKon - Pediatric Dosing Guide",
+  "description": "Bilingual (Arabic/English) pediatric drug-dosing reference and weight-based mL dose calculator for clinicians and pharmacists.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
