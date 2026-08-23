@@ -65,16 +65,15 @@ self.addEventListener('fetch', (event) => {
           self.registration.unregister();
           return new Response(SHUTDOWN_HTML, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
         }
-        return caches.match(request).then((cached) => {
-          if (cached) {
-            fetch(request).then((res) => { if (res && res.status === 200) caches.open(CACHE_NAME).then((c) => c.put(request, res.clone())); }).catch(() => {});
-            return cached;
-          }
-          return fetch(request).then((res) => {
-            if (res && res.status === 200) caches.open(CACHE_NAME).then((c) => c.put(request, res.clone()));
-            return res;
-          }).catch(() => caches.match('./index.html'));
-        });
+        return fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const clone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', clone));
+            }
+            return networkResponse;
+          })
+          .catch(() => caches.match('./index.html').then((r) => r || caches.match('./')));
       })
     );
     return;
@@ -84,15 +83,22 @@ self.addEventListener('fetch', (event) => {
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
         if (request.url.startsWith(self.location.origin)) {
-          fetch(request).then((res) => { if (res && res.status === 200) caches.open(CACHE_NAME).then((c) => c.put(request, res.clone())); }).catch(() => {});
+          fetch(request).then((res) => {
+            if (res && res.status === 200) caches.open(CACHE_NAME).then((c) => c.put(request, res.clone()));
+          }).catch(() => {});
         }
         return cachedResponse;
       }
-      return fetch(request).then((res) => {
-        if (!res || res.status !== 200 || (res.type !== 'basic' && res.type !== 'cors')) return res;
-        caches.open(CACHE_NAME).then((c) => c.put(request, res.clone()));
-        return res;
-      }).catch(() => null);
+      return fetch(request)
+        .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200 || (networkResponse.type !== 'basic' && networkResponse.type !== 'cors')) {
+            return networkResponse;
+          }
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return networkResponse;
+        })
+        .catch(() => null);
     })
   );
 });
