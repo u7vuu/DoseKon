@@ -33,11 +33,11 @@ export const Header: React.FC<HeaderProps> = ({
     if (months < 12) {
       weight = (months + 9) / 2;
       range = 'infant';
-    } else if (years <= 5) {
+    } else if (years <= 8) {
       weight = years * 2 + 8;
       range = 'child';
     } else {
-      weight = years * 3 + 7;
+      weight = years * 2 + 9;
       range = 'older';
     }
 
@@ -239,7 +239,7 @@ export const Header: React.FC<HeaderProps> = ({
                       : 'bg-white/5 text-[var(--header-text-soft)] border-white/10'
                   }`}
                 >
-                  <span className="font-semibold">1–5y</span> · (yr × 2) + 8
+                  <span className="font-semibold">1–8y</span> · (yr × 2) + 8
                 </div>
                 <div
                   className={`px-3 py-2 rounded-lg text-xs font-mono text-center border transition-all ${
@@ -248,7 +248,7 @@ export const Header: React.FC<HeaderProps> = ({
                       : 'bg-white/5 text-[var(--header-text-soft)] border-white/10'
                   }`}
                 >
-                  <span className="font-semibold">6–12y</span> · (yr × 3) + 7
+                  <span className="font-semibold">8y+</span> · (yr × 2) + 9
                 </div>
               </div>
 
